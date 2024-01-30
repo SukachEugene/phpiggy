@@ -30,7 +30,8 @@ class Database
         }
     }
 
-    public function query(string $query, array $params = []) : Database {
+    public function query(string $query, array $params = []) : Database 
+    {
         $this->stmt = $this->connection->prepare($query);
 
         $this->stmt->execute($params);
@@ -38,15 +39,23 @@ class Database
         return $this;
     }
 
-    public function count() {
+    public function count() 
+    {
         return $this->stmt->fetchColumn();
     }
 
-    public function find() {
+    public function find() 
+    {
         return $this->stmt->fetch();
     }
 
-    public function id() {
+    public function id() 
+    {
         return $this->connection->lastInsertId();
+    }
+
+    public function findAll()
+    {
+        return $this->stmt->fetchAll();
     }
 }
