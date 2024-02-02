@@ -7,14 +7,15 @@ namespace App\Services;
 use Framework\Database;
 use Framework\Exceptions\ValidationException;
 
-class UserService {
+class UserService
+{
 
     public function __construct(private Database $db)
     {
-        
     }
 
-    public function isEmailTaken(string $email) {
+    public function isEmailTaken(string $email)
+    {
         $emailCount = $this->db->query(
             "SELECT COUNT(*) FROM users WHERE email= :email",
             [
@@ -27,8 +28,9 @@ class UserService {
         }
     }
 
-    public function create(array $formData) {
-    
+    public function create(array $formData)
+    {
+
         $password = password_hash($formData['password'], PASSWORD_BCRYPT, ['cost' => 12]);
 
         $this->db->query(
@@ -48,7 +50,8 @@ class UserService {
         $_SESSION['user'] = $this->db->id();
     }
 
-    public function login(array $formData) {
+    public function login(array $formData)
+    {
         $user = $this->db->query(
             "SELECT * FROM users WHERE email = :email",
             [
@@ -67,10 +70,28 @@ class UserService {
         $_SESSION['user'] = $user['id'];
     }
 
-    public function logout() {
-        unset($_SESSION['user']);
+    public function logout()
+    {
 
-        session_regenerate_id();
+        session_destroy();
+
+        $params = session_get_cookie_params();
+
+        setcookie(
+            'PHPSESSID',
+            '',
+            time() - 3600,
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
+
+        /**
+         * different solution
+         */
+        
+        // unset($_SESSION['user']);
+        // session_regenerate_id();
     }
-    
 }
